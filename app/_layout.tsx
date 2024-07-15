@@ -4,6 +4,8 @@ import "react-native-url-polyfill/auto";
 import { Stack, SplashScreen } from "expo-router";
 import GlobalProvider, { useGlobalContext } from "./context/GlobalProvider";
 import { Alert } from "react-native";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,17 +43,30 @@ const RootLayout = () => {
 	}
 
 	return (
-		<GlobalProvider>
-			<Stack>
-				<Stack.Screen name="index" options={{ headerShown: false }} />
-				<Stack.Screen name="home" options={{ headerShown: false }} />
-				<Stack.Screen name="details" options={{ headerShown: false }} />
-				<Stack.Screen
-					name="settings"
-					options={{ headerShown: false }}
-				/>
-			</Stack>
-		</GlobalProvider>
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<BottomSheetModalProvider>
+				<GlobalProvider>
+					<Stack>
+						<Stack.Screen
+							name="index"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="home"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="details/[item]"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="settings"
+							options={{ headerShown: false }}
+						/>
+					</Stack>
+				</GlobalProvider>
+			</BottomSheetModalProvider>
+		</GestureHandlerRootView>
 	);
 };
 

@@ -41,7 +41,9 @@ const StartPage = () => {
 						></OutlinedButton>
 						<FilledButton
 							title="Openproject aktivieren"
-							handlePress={() => {}}
+							handlePress={() => {
+								router.push("/settings");
+							}}
 							containerStyles=""
 							textStyles=""
 							isLoading={false}

@@ -18,8 +18,6 @@ export type GlobalContextType = {
 		id: number,
 		description: string,
 		due_date: string,
-		created_at: string,
-		updated_at: string,
 		start_date: string,
 		project: OpenProjectDataObject,
 		status: OpenProjectDataObject,
@@ -29,5 +27,4 @@ export type GlobalContextType = {
 	getAllWorkPackages: () => WorkPackage[];
 	getFilteredWorkPackages: (filter: string) => WorkPackage[];
 	getCurrentUser: () => User;
-	getOpenProjectData: () => OpenProjectDataObject;
 };

@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "lib/domain/constants/images.ts", "app/index.tsx", "app/index.js", "app/details/details.jsx", "app/home/home.jsx", "app/settings.tsx", "app/settings/_layout.jsx", "app/context/aGlobalProvider.ts"  ]
+, "lib/domain/constants/images.ts", "app/index.tsx", "app/index.js", "app/details/[item].tsx", "app/settings.tsx", "app/context/GlobalProvider.ts"  ]
 }

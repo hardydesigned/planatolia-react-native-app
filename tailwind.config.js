@@ -19,7 +19,7 @@ module.exports = {
         background: "#1D2428",
         secondaryBackground: "#14181B",
         accent1: "#4B39EF",
-        accent2: "#39D2C0",
+        accent2: "#249689",
         accent3: "#EE8B60",
         accent4: "#57636C",
       },

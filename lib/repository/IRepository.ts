@@ -1,5 +1,4 @@
-import { OpenProjectData } from "./@types/OpenProjectData";
-import { OpenProjectDataObject } from "./@types/OpenProjectDataObject";
+import { DataObject } from "./@types/DataObject";
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 
@@ -8,16 +7,13 @@ export default interface IRepository {
 		id: number,
 		description: string,
 		due_date: string,
-		created_at: string,
-		updated_at: string,
 		start_date: string,
-		project: OpenProjectDataObject,
-		status: OpenProjectDataObject,
-		type: OpenProjectDataObject
+		project: DataObject,
+		status: DataObject,
+		type: DataObject
 	): WorkPackage;
 	deleteWorkPackage(id: number): WorkPackage;
 	getAllWorkPackages(): WorkPackage[];
 	getFilteredWorkPackages(filter: string): WorkPackage[];
 	getCurrentUser(): User;
-	getOpenProjectData(): OpenProjectData;
 }

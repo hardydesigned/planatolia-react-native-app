@@ -4,8 +4,7 @@ import { User } from "@/lib/repository/@types/User";
 import { WorkPackage } from "@/lib/repository/@types/WorkPackage";
 import LocalRepositoryImpl from "@/lib/repository/LocalRepositoryImpl";
 import OpenProjectRepositoryImpl from "@/lib/repository/OpenProjectRepositoryImpl";
-import { OpenProjectDataObject } from "@/lib/repository/@types/OpenProjectDataObject";
-import IRepository from "@/lib/repository/IRepository";
+import { DataObject } from "@/lib/repository/@types/DataObject";
 
 export const GlobalContext = React.createContext<GlobalContextType>({} as any);
 export const useGlobalContext = () => React.useContext(GlobalContext);
@@ -19,11 +18,12 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [error, setError] = React.useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = React.useState<string>("");
 	const [workPackages, setWorkPackages] = React.useState<WorkPackage[]>([]);
-	const [repository, setRepository] = React.useState<IRepository | null>(
-		null
-	);
 	const [openProjectData, setOpenProjectData] =
-		React.useState<OpenProjectDataObject | null>(null);
+		React.useState<DataObject | null>(null);
+	const [useOpenproject, setUseOpenproject] = React.useState<boolean>(false);
+
+	const localRepository = new LocalRepositoryImpl();
+	const openprojectRepository = new OpenProjectRepositoryImpl();
 
 	const saveName = (firstName: string) => {
 		setUser({ ...user, firstName });
@@ -41,20 +41,16 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		id: number,
 		description: string,
 		due_date: string,
-		created_at: string,
-		updated_at: string,
 		start_date: string,
-		project: OpenProjectDataObject,
-		status: OpenProjectDataObject,
-		type: OpenProjectDataObject
+		project: DataObject,
+		status: DataObject,
+		type: DataObject
 	) => {
 		try {
-			const workPackage = repository!.saveWorkPackage(
+			const workPackage = localRepository.saveWorkPackage(
 				id,
 				description,
 				due_date,
-				created_at,
-				updated_at,
 				start_date,
 				project,
 				status,
@@ -70,7 +66,8 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const deleteWorkPackage = (id: number) => {
 		try {
-			const workPackage = repository!.deleteWorkPackage(id);
+			const workPackage = localRepository.deleteWorkPackage(id);
+			setWorkPackages(workPackages.filter((item) => item.id !== id));
 			return workPackage;
 		} catch (error) {
 			setErrorMessage("Failed to delete work package locally.");
@@ -81,9 +78,10 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const getAllWorkPackages = () => {
 		try {
-			const workPackages = repository!.getAllWorkPackages();
-			setWorkPackages(workPackages);
-			return workPackages;
+			const wps = localRepository.getAllWorkPackages();
+			setWorkPackages(wps);
+
+			return wps;
 		} catch (error) {
 			setErrorMessage("Failed to get work packages locally.");
 			setError(true);
@@ -93,8 +91,11 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const getFilteredWorkPackages = (filter: string) => {
 		try {
-			const workPackages = repository!.getFilteredWorkPackages(filter);
-			return workPackages;
+			console.log(filter);
+
+			const wps = localRepository.getFilteredWorkPackages(filter);
+			setWorkPackages(wps);
+			return wps;
 		} catch (error) {
 			setErrorMessage("Failed to get filtered work packages locally.");
 			setError(true);
@@ -104,8 +105,9 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const getCurrentUser = () => {
 		try {
-			const user = repository!.getCurrentUser();
-			return user;
+			const user1 = localRepository.getCurrentUser();
+			setUser(user1);
+			return user1;
 		} catch (error) {
 			setErrorMessage("Failed to get user locally.");
 			setError(true);
@@ -113,31 +115,17 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
-	const getOpenProjectData = () => {
-		try {
-			const opdata = repository!.getOpenProjectData();
-			return opdata;
-		} catch (error) {
-			setErrorMessage("Failed to get Openproject Data locally.");
-			setError(true);
-			throw new Error("Failed to get Openproject Data locally.");
-		}
-	};
-
 	React.useEffect(() => {
 		const init = async () => {
 			setLoading(true);
+
 			try {
-				const localRepository = new LocalRepositoryImpl();
-				setRepository(localRepository);
 				const currentUser = localRepository.getCurrentUser();
 				setUser(currentUser);
 				setIsLoggedIn(true);
 
-				const opData = localRepository.getOpenProjectData();
-				if (opData.apiKey !== "" && opData.url !== "") {
-					const opRepository = new OpenProjectRepositoryImpl();
-					setRepository(opRepository);
+				if (currentUser.apiKey !== "" && currentUser.url !== "") {
+					setUseOpenproject(true);
 				}
 			} catch (error) {
 				setError(true);
@@ -168,7 +156,6 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 				getAllWorkPackages,
 				getFilteredWorkPackages,
 				getCurrentUser,
-				getOpenProjectData,
 				loading,
 				isLoggedIn,
 				error,

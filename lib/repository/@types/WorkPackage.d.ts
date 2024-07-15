@@ -1,13 +1,11 @@
-import { OpenProjectDataObject } from "./OpenProjectDataObject";
+import { DataObject } from "./DataObject";
 
 export interface WorkPackage {
 	id: number;
 	description: string;
 	due_date: string;
-	created_at: string;
-	updated_at: string;
 	start_date: string;
-	project: OpenProjectDataObject;
-	status: OpenProjectDataObject;
-	type: OpenProjectDataObject;
+	project: DataObject;
+	status: DataObject;
+	type: DataObject;
 }

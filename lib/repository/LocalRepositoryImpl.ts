@@ -1,5 +1,4 @@
-import { OpenProjectData } from "./@types/OpenProjectData";
-import { OpenProjectDataObject } from "./@types/OpenProjectDataObject";
+import { DataObject } from "./@types/DataObject";
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 import IRepository from "./IRepository";
@@ -11,19 +10,19 @@ export default class LocalRepositoryImpl implements IRepository {
 		return this.localRepository;
 	}
 
-	private projects: OpenProjectDataObject[] = [
+	private projects: DataObject[] = [
 		{ id: 1, value: "Project 1" },
 		{ id: 2, value: "Project 2" },
 		{ id: 3, value: "Project 3" },
 	];
 
-	private statuses: OpenProjectDataObject[] = [
-		{ id: 1, value: "Status 1" },
-		{ id: 2, value: "Status 2" },
-		{ id: 3, value: "Status 3" },
+	private statuses: DataObject[] = [
+		{ id: 1, value: "Offen" },
+		{ id: 2, value: "In Bearbeitung" },
+		{ id: 3, value: "Abgeschlossen" },
 	];
 
-	private types: OpenProjectDataObject[] = [
+	private types: DataObject[] = [
 		{ id: 1, value: "Type 1" },
 		{ id: 2, value: "Type 2" },
 		{ id: 3, value: "Type 3" },
@@ -32,10 +31,8 @@ export default class LocalRepositoryImpl implements IRepository {
 	private workPackages: WorkPackage[] = [
 		{
 			id: 1,
-			description: "Work Package 1",
+			description: "Work Pak 1",
 			due_date: "2021-01-01",
-			created_at: "2021-01-01",
-			updated_at: "2021-01-01",
 			start_date: "2021-01-01",
 			project: this.projects[0],
 			status: this.statuses[0],
@@ -45,8 +42,6 @@ export default class LocalRepositoryImpl implements IRepository {
 			id: 2,
 			description: "Work Package 2",
 			due_date: "2021-01-02",
-			created_at: "2021-01-02",
-			updated_at: "2021-01-02",
 			start_date: "2021-01-02",
 			project: this.projects[1],
 			status: this.statuses[1],
@@ -56,8 +51,6 @@ export default class LocalRepositoryImpl implements IRepository {
 			id: 3,
 			description: "Work Package 3",
 			due_date: "2021-01-03",
-			created_at: "2021-01-03",
-			updated_at: "2021-01-03",
 			start_date: "2021-01-03",
 			project: this.projects[1],
 			status: this.statuses[2],
@@ -67,8 +60,6 @@ export default class LocalRepositoryImpl implements IRepository {
 			id: 4,
 			description: "Work Package 4",
 			due_date: "2021-01-04",
-			created_at: "2021-01-04",
-			updated_at: "2021-01-04",
 			start_date: "2021-01-04",
 			project: this.projects[2],
 			status: this.statuses[2],
@@ -78,8 +69,6 @@ export default class LocalRepositoryImpl implements IRepository {
 			id: 5,
 			description: "Work Package 5",
 			due_date: "2021-01-05",
-			created_at: "2021-01-05",
-			updated_at: "2021-01-05",
 			start_date: "2021-01-05",
 			project: this.projects[1],
 			status: this.statuses[0],
@@ -93,20 +82,16 @@ export default class LocalRepositoryImpl implements IRepository {
 		id: number,
 		description: string,
 		due_date: string,
-		created_at: string,
-		updated_at: string,
 		start_date: string,
-		project: OpenProjectDataObject,
-		status: OpenProjectDataObject,
-		type: OpenProjectDataObject
+		project: DataObject,
+		status: DataObject,
+		type: DataObject
 	): WorkPackage {
 		try {
 			const workPackage = {
 				id,
 				description,
 				due_date,
-				created_at,
-				updated_at,
 				start_date,
 				project,
 				status,
@@ -139,18 +124,18 @@ export default class LocalRepositoryImpl implements IRepository {
 		return this.workPackages;
 	}
 	getFilteredWorkPackages(filter: string): WorkPackage[] {
-		return this.workPackages.filter((item) => item.description === filter);
+		return this.workPackages.filter(
+			(item) =>
+				item.project.value === filter ||
+				item.status.value === filter ||
+				item.type.value === filter
+		);
 	}
 
 	getCurrentUser(): User {
 		return {
 			firstName: "Dieter",
 			theme: "dark",
-		};
-	}
-
-	getOpenProjectData(): OpenProjectData {
-		return {
 			url: "http://localhost:8080",
 			apiKey: "123456",
 			projects: this.projects,
