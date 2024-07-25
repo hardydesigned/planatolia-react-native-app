@@ -30,7 +30,6 @@ import {
 	BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import "react-native-gesture-handler";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Home = () => {
 	const {
@@ -41,9 +40,6 @@ const Home = () => {
 		getFilteredWorkPackages,
 	} = useGlobalContext();
 	const [refreshing, setRefreshing] = useState(false);
-
-	// console.log(workPackages);
-	// console.log(contextState);
 
 	const onRefresh = async () => {
 		setRefreshing(true);
@@ -62,8 +58,6 @@ const Home = () => {
 		};
 		init();
 	}, []);
-
-	console.log(getFilteredWorkPackages);
 
 	return (
 		<SafeAreaView className="bg-background h-full p-4">
@@ -104,7 +98,9 @@ const Home = () => {
 				renderItem={({ item }) => (
 					<WorkPackageItem
 						workPackage={item}
-						handlePress={() => {}}
+						handlePress={() => {
+							router.push("/details/" + item.id);
+						}}
 						key={item.id}
 					/>
 				)}

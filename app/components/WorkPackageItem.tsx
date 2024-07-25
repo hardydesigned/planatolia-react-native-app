@@ -39,6 +39,11 @@ const WorkPackageItem: React.FC<{
 		}
 		if (workPackage?.status?.value === "In Bearbeitung") {
 			setStatusClass("bg-tertiary");
+			setStatusClassText("");
+		}
+		if (workPackage?.status?.value === "Offen") {
+			setStatusClass("bg-secondaryBackground");
+			setStatusClassText("");
 		}
 	}, [workPackage]);
 

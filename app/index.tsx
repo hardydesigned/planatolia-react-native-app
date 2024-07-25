@@ -9,9 +9,22 @@ import { useGlobalContext } from "./context/GlobalProvider";
 import Loader from "./components/Loader";
 
 const StartPage = () => {
-	const { loading, isLoggedIn, error, errorMessage } = useGlobalContext();
+	const { loading, isLoggedIn, error, errorMessage, saveUser } =
+		useGlobalContext();
 
 	if (!loading && isLoggedIn) return <Redirect href="/home" />;
+
+	const standardProjects = [{ id: 0, value: "Eingang" }];
+	const standardStatuses = [
+		{ id: 0, value: "Offen" },
+		{ id: 1, value: "In Bearbeitung" },
+		{ id: 2, value: "Abgeschlossen" },
+	];
+	const standardTypes = [
+		{ id: 0, value: "Aufgabe" },
+		{ id: 1, value: "Phase" },
+		{ id: 2, value: "Meilenstein" },
+	];
 
 	return (
 		<SafeAreaView className="bg-background h-full p-4">
@@ -34,7 +47,21 @@ const StartPage = () => {
 					<View className="mt-10">
 						<OutlinedButton
 							title="Ohne Openproject starten"
-							handlePress={() => router.push("/home")}
+							handlePress={() => {
+								router.push("/home");
+								saveUser(
+									"",
+									"",
+									"",
+									"",
+									standardProjects,
+									standardStatuses,
+									standardTypes,
+									standardProjects[0],
+									standardStatuses[0],
+									standardTypes[0]
+								);
+							}}
 							containerStyles=""
 							textStyles=""
 							isLoading={false}
@@ -42,6 +69,18 @@ const StartPage = () => {
 						<FilledButton
 							title="Openproject aktivieren"
 							handlePress={() => {
+								saveUser(
+									"",
+									"",
+									"",
+									"",
+									standardProjects,
+									standardStatuses,
+									standardTypes,
+									standardProjects[0],
+									standardStatuses[0],
+									standardTypes[0]
+								);
 								router.push("/settings");
 							}}
 							containerStyles=""

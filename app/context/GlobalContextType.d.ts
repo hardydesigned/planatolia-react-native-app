@@ -6,10 +6,6 @@ export type GlobalContextType = {
 	errorMessage: string;
 	workPackages: WorkPackage[];
 	openProjectData: OpenProjectDataObject;
-	saveName: (firstName: string) => void;
-	saveTheme: (firstName: string) => void;
-	getName: () => string | undefined;
-	getTheme: () => string | undefined;
 	setError: (error: boolean) => void;
 	setErrorMessage: (errorMessage: string) => void;
 	setLoading: (loading: boolean) => void;
@@ -24,7 +20,19 @@ export type GlobalContextType = {
 		type: OpenProjectDataObject
 	) => WorkPackage;
 	deleteWorkPackage: (id: number) => WorkPackage;
-	getAllWorkPackages: () => WorkPackage[];
-	getFilteredWorkPackages: (filter: string) => WorkPackage[];
-	getCurrentUser: () => User;
+	getAllWorkPackages: () => Promise<WorkPackage[]>;
+	getFilteredWorkPackages: (filter: string) => Promise<WorkPackage[]>;
+	getCurrentUser: () => Promise<User>;
+	saveUser: (
+		firstname: string,
+		theme: string,
+		apiKey: string,
+		url: string,
+		projects: DataObject[],
+		statuses: DataObject[],
+		types: DataObject[],
+		projectDefault: DataObject,
+		typeDefault: DataObject,
+		statusDefault: DataObject
+	) => any;
 };

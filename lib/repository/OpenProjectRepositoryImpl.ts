@@ -79,27 +79,41 @@ export default class OpenProjectRepositoryImpl implements IRepository {
 
 	constructor() {}
 
-	saveWorkPackage(
+	async saveUser(
+		firstname?: string,
+		theme?: string,
+		apiKey?: string,
+		url?: string,
+		projects?: DataObject[],
+		statuses?: DataObject[],
+		types?: DataObject[],
+		projectDefault?: DataObject,
+		typeDefault?: DataObject,
+		statusDefault?: DataObject
+	) {
+		throw new Error("Not implemented");
+	}
+
+	async saveWorkPackage(
 		id: number,
 		description: string,
 		due_date: string,
 		start_date: string,
-		project: DataObject,
-		status: DataObject,
-		type: DataObject
-	): WorkPackage {
+		project: string,
+		status: string,
+		type: string
+	) {
 		try {
-			const workPackage = {
-				id,
-				description,
-				due_date,
-				start_date,
-				project,
-				status,
-				type,
-			};
-			this.workPackages.push(workPackage);
-			return workPackage;
+			// const workPackage = {
+			// 	id,
+			// 	description,
+			// 	due_date,
+			// 	start_date,
+			// 	project,
+			// 	status,
+			// 	type,
+			// };
+			// this.workPackages.push(workPackage);
 		} catch (error) {
 			throw new Error("Failed to save work package locally");
 		}
@@ -121,17 +135,15 @@ export default class OpenProjectRepositoryImpl implements IRepository {
 			throw new Error("Failed to delete work package locally.");
 		}
 	}
-	getAllWorkPackages(): WorkPackage[] {
-		return this.workPackages;
+	getAllWorkPackages(): Promise<WorkPackage[]> {
+		// return this.workPackages;
+		throw new Error("Not implemented");
 	}
-	getFilteredWorkPackages(filter: string): WorkPackage[] {
-		return this.workPackages.filter((item) => item.description === filter);
+	getFilteredWorkPackages(filter: string): Promise<WorkPackage[]> {
+		throw new Error("Not implemented");
 	}
 
-	getCurrentUser(): User {
-		return {
-			firstName: "Dieter",
-			theme: "dark",
-		};
+	getCurrentUser(): Promise<User> {
+		throw new Error("Not implemented");
 	}
 }

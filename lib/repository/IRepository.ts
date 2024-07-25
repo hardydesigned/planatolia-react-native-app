@@ -8,12 +8,24 @@ export default interface IRepository {
 		description: string,
 		due_date: string,
 		start_date: string,
-		project: DataObject,
-		status: DataObject,
-		type: DataObject
-	): WorkPackage;
-	deleteWorkPackage(id: number): WorkPackage;
-	getAllWorkPackages(): WorkPackage[];
-	getFilteredWorkPackages(filter: string): WorkPackage[];
-	getCurrentUser(): User;
+		project: string,
+		status: string,
+		type: string
+	): any;
+	deleteWorkPackage(id: number): any;
+	getAllWorkPackages(): Promise<WorkPackage[]>;
+	getFilteredWorkPackages(filter: string): Promise<WorkPackage[]>;
+	getCurrentUser(): Promise<User>;
+	saveUser: (
+		firstname: string,
+		theme: string,
+		apiKey: string,
+		url: string,
+		projects: DataObject[],
+		statuses: DataObject[],
+		types: DataObject[],
+		projectDefault: DataObject,
+		typeDefault: DataObject,
+		statusDefault: DataObject
+	) => any;
 }

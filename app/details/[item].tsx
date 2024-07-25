@@ -4,9 +4,11 @@ import {
 	SafeAreaView,
 	Touchable,
 	TouchableOpacity,
+	StatusBar,
+	Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, usePathname } from "expo-router";
 import RNDateTimePicker, {
 	DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
@@ -16,13 +18,15 @@ import FormField from "../components/FormField";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
+import FilledButton from "../components/FilledButton";
 
 const WorkPackageItem = () => {
-	const { query } = useLocalSearchParams();
+	const path = usePathname();
 	const { saveWorkPackage, workPackages, user } = useGlobalContext();
+	const [id, setID] = useState<number>(0);
 	const [description, setDescription] = useState<string>("");
 	const [due_date, setDueDate] = useState<Date>(
-		new Date(Date.now() + 604800000)
+		new Date(Date.now() + 86400000)
 	);
 	const [start_date, setStartDate] = useState<Date>(new Date(Date.now()));
 	const [projects, setProjects] = useState<
@@ -40,63 +44,106 @@ const WorkPackageItem = () => {
 		{ label: "Phase", value: "1" },
 		{ label: "Meilenstein", value: "2" },
 	]);
-	const [project, setProject] = useState<string>("Eingang");
-	const [status, setStatus] = useState<string>("Offen");
-	const [type, setType] = useState<string>("Aufgabe");
+
+	const [project, setProject] = useState<string>("");
+	const [status, setStatus] = useState<string>("");
+	const [type, setType] = useState<string>("");
 
 	const [openProjects, setOpenProjects] = useState(false);
 	const [openStatus, setOpenStatus] = useState(false);
 	const [openType, setOpenType] = useState(false);
 
-	const handlePress = () => {
-		// saveWorkPackage(
-		// 	1,
-		// 	description,
-		// 	due_date,
-		// 	start_date,
-		// 	project,
-		// 	status,
-		// 	type
-		// );
+	const handleSave = async () => {
+		if (
+			description === "" ||
+			project === "" ||
+			status === "" ||
+			type === ""
+		) {
+			Alert.alert("Erst alle Felder ausfüllen!");
+		} else {
+			router.back();
+		}
+		console.log(id);
+		console.log(description);
+		console.log(due_date);
+		console.log(start_date);
+		console.log(project);
+		console.log(status);
+		console.log(type);
+
+		await saveWorkPackage(
+			id,
+			description,
+			due_date.toISOString(),
+			start_date.toISOString(),
+			project,
+			status,
+			type
+		);
 	};
 
-	const [items, setItems] = useState([
-		{ label: "Apple", value: "apple" },
-		{ label: "Banana", value: "banana" },
-	]);
-
 	useEffect(() => {
-		if (
-			query !== "new" &&
-			query !== undefined &&
-			typeof query === "string"
-		) {
+		if (path === undefined || path === null || path === "new") {
+			return;
+		}
+
+		setProjects((prev) =>
+			user.projects.map((project: any) => {
+				return {
+					label: project.value,
+					value: project.value,
+				};
+			})
+		);
+
+		setStatuses((prev) =>
+			user.statuses.map((status: any) => {
+				return {
+					label: status.value,
+					value: status.value,
+				};
+			})
+		);
+
+		setTypes((prev) =>
+			user.types.map((type: any) => {
+				return {
+					label: type.value,
+					value: type.value,
+				};
+			})
+		);
+
+		const wpId = path.substring(path.lastIndexOf("/") + 1);
+
+		if (wpId !== "new" && wpId !== undefined && typeof wpId === "string") {
+			console.log(workPackages);
+
+			console.log(wpId);
+
 			const workPackage = workPackages.find(
-				(wp) => wp.id === parseInt(query)
+				(wp) => wp.id === parseInt(wpId)
 			);
+
 			if (workPackage) {
+				setID(workPackage.id);
 				setDescription(workPackage.description);
 				const startDate = new Date(workPackage.start_date);
 				setStartDate(startDate);
 				const dueDate = new Date(workPackage.due_date);
 				setDueDate(dueDate);
-				setProject(workPackage.project);
-				setStatus(workPackage.status);
-				setType(workPackage.type);
+				setProject(workPackage.project.value);
+				setStatus(workPackage.status.value);
+				setType(workPackage.type.value);
 			}
 		}
 	}, []);
 
 	return (
-		<SafeAreaView className="bg-background h-full p-4">
+		<SafeAreaView className="bg-background h-full p-4 flex flex-col justify-between">
 			<View className="p-4">
 				<View className="flex flex-row w-full justify-end items-center">
-					<TouchableOpacity
-						onPress={() => router.back()}
-						className="mr-4"
-					>
-						<Ionicons name="save" size={24} color="white" />
-					</TouchableOpacity>
 					<TouchableOpacity onPress={() => router.back()}>
 						<Ionicons name="close" size={32} color="white" />
 					</TouchableOpacity>
@@ -115,6 +162,9 @@ const WorkPackageItem = () => {
 						<RNDateTimePicker
 							value={start_date}
 							display="calendar"
+							onChange={(event, selectedDate) => {
+								if (selectedDate) setStartDate(selectedDate);
+							}}
 						/>
 						<Ionicons
 							name="remove-outline"
@@ -124,6 +174,9 @@ const WorkPackageItem = () => {
 						<RNDateTimePicker
 							value={due_date!}
 							display="calendar"
+							onChange={(event, selectedDate) => {
+								if (selectedDate) setDueDate(selectedDate);
+							}}
 						/>
 					</View>
 				</View>
@@ -133,7 +186,11 @@ const WorkPackageItem = () => {
 						value={project}
 						items={projects}
 						multiple={false}
-						placeholder="Projekt auswählen"
+						placeholder={
+							project === ""
+								? "Projekt auswählen"
+								: project.toString()
+						}
 						setValue={(val) => {
 							setProject(val);
 						}}
@@ -147,7 +204,9 @@ const WorkPackageItem = () => {
 						value={type}
 						items={types}
 						multiple={false}
-						placeholder="Typ auswählen"
+						placeholder={
+							type === "" ? "Typ auswählen" : type.toString()
+						}
 						setValue={(val) => {
 							setType(val);
 						}}
@@ -161,7 +220,11 @@ const WorkPackageItem = () => {
 						items={statuses}
 						multiple={false}
 						theme="DARK"
-						placeholder="Status auswählen"
+						placeholder={
+							status === ""
+								? "Status auswählen"
+								: status.toString()
+						}
 						setValue={(val) => {
 							setStatus(val);
 						}}
@@ -170,6 +233,19 @@ const WorkPackageItem = () => {
 					/>
 				</View>
 			</View>
+			<View className="p-4">
+				<FilledButton
+					title="Speichern"
+					handlePress={() => {
+						handleSave();
+					}}
+					containerStyles={""}
+					textStyles={""}
+					isLoading={false}
+				/>
+			</View>
+
+			<StatusBar backgroundColor="#161622" />
 		</SafeAreaView>
 	);
 };

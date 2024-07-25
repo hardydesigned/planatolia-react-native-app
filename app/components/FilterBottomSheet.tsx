@@ -13,9 +13,14 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 	const [filterText, setFilterText] = useState<string>("Projekt");
 	const [dataObjects, setDataObjects] = useState(user?.projects);
 	const [refreshing, setRefreshing] = useState(false);
+	const [activeFilter, setActiveFilter] = useState<string>("");
 
 	const handlePress = async (value: string) => {
 		await filterFunction(value);
+		console.log(value);
+		console.log(activeFilter);
+
+		setActiveFilter(value);
 	};
 
 	return (
@@ -31,7 +36,11 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 							onPress={() => handlePress(item.value)}
 						>
 							<Text
-								className="text-primaryText text-lg"
+								className={`${
+									activeFilter === item.value
+										? "text-primary"
+										: "text-primaryText"
+								} text-lg`}
 								key={item.id}
 							>
 								{item.value}
@@ -39,9 +48,18 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 						</TouchableOpacity>
 					)}
 					ListHeaderComponent={() => (
-						<Text className=" text-primaryText text-xl pl-3 mb-4">
-							Filtern nach {filterText}
-						</Text>
+						<View className="flex w-full justify-between flex-row px-2">
+							<Text className=" text-primaryText text-xl mb-4">
+								Filtern nach {filterText}
+							</Text>
+							<TouchableOpacity onPress={() => handlePress("")}>
+								<Ionicons
+									name="refresh-circle"
+									size={32}
+									color={"#FFF"}
+								></Ionicons>
+							</TouchableOpacity>
+						</View>
 					)}
 					ListEmptyComponent={() => (
 						<Text>Keine Filter vorhanden gefunden</Text>

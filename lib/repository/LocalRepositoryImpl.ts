@@ -2,6 +2,7 @@ import { DataObject } from "./@types/DataObject";
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 import IRepository from "./IRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class LocalRepositoryImpl implements IRepository {
 	static localRepository: LocalRepositoryImpl = new LocalRepositoryImpl();
@@ -10,121 +11,113 @@ export default class LocalRepositoryImpl implements IRepository {
 		return this.localRepository;
 	}
 
-	private projects: DataObject[] = [
-		{ id: 1, value: "Project 1" },
-		{ id: 2, value: "Project 2" },
-		{ id: 3, value: "Project 3" },
-	];
-
-	private statuses: DataObject[] = [
-		{ id: 1, value: "Offen" },
-		{ id: 2, value: "In Bearbeitung" },
-		{ id: 3, value: "Abgeschlossen" },
-	];
-
-	private types: DataObject[] = [
-		{ id: 1, value: "Type 1" },
-		{ id: 2, value: "Type 2" },
-		{ id: 3, value: "Type 3" },
-	];
-
-	private workPackages: WorkPackage[] = [
-		{
-			id: 1,
-			description: "Work Pak 1",
-			due_date: "2021-01-01",
-			start_date: "2021-01-01",
-			project: this.projects[0],
-			status: this.statuses[0],
-			type: this.types[0],
-		},
-		{
-			id: 2,
-			description: "Work Package 2",
-			due_date: "2021-01-02",
-			start_date: "2021-01-02",
-			project: this.projects[1],
-			status: this.statuses[1],
-			type: this.types[1],
-		},
-		{
-			id: 3,
-			description: "Work Package 3",
-			due_date: "2021-01-03",
-			start_date: "2021-01-03",
-			project: this.projects[1],
-			status: this.statuses[2],
-			type: this.types[1],
-		},
-		{
-			id: 4,
-			description: "Work Package 4",
-			due_date: "2021-01-04",
-			start_date: "2021-01-04",
-			project: this.projects[2],
-			status: this.statuses[2],
-			type: this.types[2],
-		},
-		{
-			id: 5,
-			description: "Work Package 5",
-			due_date: "2021-01-05",
-			start_date: "2021-01-05",
-			project: this.projects[1],
-			status: this.statuses[0],
-			type: this.types[1],
-		},
-	];
-
 	constructor() {}
 
-	saveWorkPackage(
+	async saveWorkPackage(
 		id: number,
 		description: string,
 		due_date: string,
 		start_date: string,
-		project: DataObject,
-		status: DataObject,
-		type: DataObject
-	): WorkPackage {
+		project: string,
+		status: string,
+		type: string
+	) {
 		try {
-			const workPackage = {
-				id,
-				description,
-				due_date,
-				start_date,
-				project,
-				status,
-				type,
-			};
-			this.workPackages.push(workPackage);
-			return workPackage;
+			if (id === 0) {
+				const user = await this.getCurrentUser();
+
+				const proj = user.projects!.find(
+					(item) => item.value === project
+				)!;
+				const stat = user.statuses!.find(
+					(item) => item.value === status
+				)!;
+				const typ = user.types!.find((item) => item.value === type)!;
+
+				const wps = await this.getAllWorkPackages();
+
+				const latestId = wps.reduce(
+					(acc, item) => Math.max(acc, item.id),
+					0
+				);
+
+				const workPackage = {
+					id: latestId + 1,
+					description,
+					due_date,
+					start_date,
+					project: proj,
+					status: stat,
+					type: typ,
+				};
+
+				await AsyncStorage.setItem(
+					"workPackage-" + Number(latestId + 1),
+					JSON.stringify(workPackage)
+				);
+			} else {
+				const wps = await this.getAllWorkPackages();
+
+				const workPackage = wps.find((item) => item.id === id);
+
+				if (workPackage) {
+					const user = await this.getCurrentUser();
+
+					workPackage.description = description;
+					workPackage.due_date = due_date;
+					workPackage.start_date = start_date;
+					workPackage.project = user.projects!.find(
+						(item) => item.value === project
+					)!;
+					workPackage.status = user.statuses!.find(
+						(item) => item.value === status
+					)!;
+					workPackage.type = user.types!.find(
+						(item) => item.value === type
+					)!;
+
+					await AsyncStorage.mergeItem(
+						"workPackage-" + id,
+						JSON.stringify(workPackage)
+					);
+				}
+			}
 		} catch (error) {
-			throw new Error("Failed to save work package locally");
+			throw new Error("Failed to save work package locally on Repo");
 		}
 	}
-	deleteWorkPackage(id: number): WorkPackage {
+
+	async deleteWorkPackage(id: number) {
 		try {
-			const workPackage = this.workPackages.find(
-				(item) => item.id === id
-			);
-			if (workPackage) {
-				this.workPackages = this.workPackages.filter(
-					(item) => item.id !== id
-				);
-				return workPackage;
-			} else {
-				throw new Error("Work package not found.");
-			}
+			await AsyncStorage.removeItem("workPackage-" + id);
 		} catch (error) {
 			throw new Error("Failed to delete work package locally.");
 		}
 	}
-	getAllWorkPackages(): WorkPackage[] {
-		return this.workPackages;
+
+	async getAllWorkPackages(): Promise<WorkPackage[]> {
+		try {
+			const keys = await AsyncStorage.getAllKeys();
+
+			const values = await AsyncStorage.multiGet(keys);
+
+			const wps = values.map((item) => {
+				return JSON.parse(item[1]?.toString() || "");
+			});
+
+			//await AsyncStorage.clear();
+
+			return wps;
+		} catch (e) {
+			throw new Error("Failed to get work packages locally.");
+		}
 	}
-	getFilteredWorkPackages(filter: string): WorkPackage[] {
-		return this.workPackages.filter(
+	async getFilteredWorkPackages(filter: string): Promise<WorkPackage[]> {
+		if (filter === "") {
+			return await this.getAllWorkPackages();
+		}
+		const wps = await this.getAllWorkPackages();
+		return wps.filter(
 			(item) =>
 				item.project.value === filter ||
 				item.status.value === filter ||
@@ -132,18 +125,69 @@ export default class LocalRepositoryImpl implements IRepository {
 		);
 	}
 
-	getCurrentUser(): User {
+	async getCurrentUser(): Promise<User> {
+		const values = await AsyncStorage.multiGet([
+			"firstName",
+			"theme",
+			"url",
+			"apiKey",
+			"projects",
+			"statuses",
+			"types",
+		]);
+
+		const projs = JSON.parse(values[4][1]?.toString() || "");
+		const stats = JSON.parse(values[5][1]?.toString() || "");
+		const typs = JSON.parse(values[6][1]?.toString() || "");
+
 		return {
-			firstName: "Dieter",
-			theme: "dark",
-			url: "http://localhost:8080",
-			apiKey: "123456",
-			projects: this.projects,
-			statuses: this.statuses,
-			types: this.types,
-			projectDefault: this.projects[0],
-			typeDefault: this.types[0],
-			statusDefault: this.statuses[0],
+			firstName: values[0][1]?.toString() || "",
+			theme: values[1][1]?.toString() || "",
+			url: values[2][1]?.toString() || "",
+			apiKey: values[3][1]?.toString() || "",
+			projects: projs,
+			statuses: stats,
+			types: typs,
+			projectDefault: projs[0],
+			typeDefault: typs[0],
+			statusDefault: stats[0],
 		};
+	}
+
+	async saveUser(
+		firstname: string,
+		theme: string,
+		apiKey: string,
+		url: string,
+		projects: DataObject[],
+		statuses: DataObject[],
+		types: DataObject[],
+		projectDefault: DataObject,
+		typeDefault: DataObject,
+		statusDefault: DataObject
+	) {
+		try {
+			await AsyncStorage.setItem("firstName", firstname);
+			await AsyncStorage.setItem("theme", theme);
+			await AsyncStorage.setItem("apiKey", apiKey);
+			await AsyncStorage.setItem("url", url);
+			await AsyncStorage.setItem("projects", JSON.stringify(projects));
+			await AsyncStorage.setItem("statuses", JSON.stringify(statuses));
+			await AsyncStorage.setItem("types", JSON.stringify(types));
+			await AsyncStorage.setItem(
+				"projectDefault",
+				JSON.stringify(projectDefault)
+			);
+			await AsyncStorage.setItem(
+				"typeDefault",
+				JSON.stringify(typeDefault)
+			);
+			await AsyncStorage.setItem(
+				"statusDefault",
+				JSON.stringify(statusDefault)
+			);
+		} catch (error) {
+			throw new Error("Failed to save work package locally on Repo");
+		}
 	}
 }

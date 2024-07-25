@@ -25,29 +25,17 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 	const localRepository = new LocalRepositoryImpl();
 	const openprojectRepository = new OpenProjectRepositoryImpl();
 
-	const saveName = (firstName: string) => {
-		setUser({ ...user, firstName });
-	};
-
-	const saveTheme = (theme: string) => {
-		setUser({ ...user, theme });
-	};
-
-	const getName = () => user?.firstName;
-
-	const getTheme = () => user?.theme;
-
-	const saveWorkPackage = (
+	const saveWorkPackage = async (
 		id: number,
 		description: string,
 		due_date: string,
 		start_date: string,
-		project: DataObject,
-		status: DataObject,
-		type: DataObject
+		project: string,
+		status: string,
+		type: string
 	) => {
 		try {
-			const workPackage = localRepository.saveWorkPackage(
+			await localRepository.saveWorkPackage(
 				id,
 				description,
 				due_date,
@@ -56,19 +44,18 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 				status,
 				type
 			);
-			return workPackage;
+			await getAllWorkPackages();
 		} catch (error) {
 			setErrorMessage("Failed to save work package locally.");
 			setError(true);
-			throw new Error("Failed to save work package locally");
+			throw new Error("Failed to save work package locally on Provider");
 		}
 	};
 
-	const deleteWorkPackage = (id: number) => {
+	const deleteWorkPackage = async (id: number) => {
 		try {
-			const workPackage = localRepository.deleteWorkPackage(id);
-			setWorkPackages(workPackages.filter((item) => item.id !== id));
-			return workPackage;
+			await localRepository.deleteWorkPackage(id);
+			await getAllWorkPackages();
 		} catch (error) {
 			setErrorMessage("Failed to delete work package locally.");
 			setError(true);
@@ -76,9 +63,9 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
-	const getAllWorkPackages = () => {
+	const getAllWorkPackages = async () => {
 		try {
-			const wps = localRepository.getAllWorkPackages();
+			const wps = await localRepository.getAllWorkPackages();
 			setWorkPackages(wps);
 
 			return wps;
@@ -89,11 +76,9 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
-	const getFilteredWorkPackages = (filter: string) => {
+	const getFilteredWorkPackages = async (filter: string) => {
 		try {
-			console.log(filter);
-
-			const wps = localRepository.getFilteredWorkPackages(filter);
+			const wps = await localRepository.getFilteredWorkPackages(filter);
 			setWorkPackages(wps);
 			return wps;
 		} catch (error) {
@@ -103,9 +88,9 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
-	const getCurrentUser = () => {
+	const getCurrentUser = async () => {
 		try {
-			const user1 = localRepository.getCurrentUser();
+			const user1 = await localRepository.getCurrentUser();
 			setUser(user1);
 			return user1;
 		} catch (error) {
@@ -115,12 +100,49 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
+	const saveName = (firstName: string) => {
+		setUser({ ...user, firstName });
+	};
+
+	const saveUser = async (
+		firstname: string,
+		theme: string,
+		apiKey: string,
+		url: string,
+		projects: DataObject[],
+		statuses: DataObject[],
+		types: DataObject[],
+		projectDefault: DataObject,
+		typeDefault: DataObject,
+		statusDefault: DataObject
+	) => {
+		try {
+			await localRepository.saveUser(
+				firstname,
+				theme,
+				apiKey,
+				url,
+				projects,
+				statuses,
+				types,
+				projectDefault,
+				typeDefault,
+				statusDefault
+			);
+			await getCurrentUser();
+		} catch (error) {
+			setErrorMessage("Failed to save User locally.");
+			setError(true);
+			throw new Error("Failed to save User locally on Provider");
+		}
+	};
+
 	React.useEffect(() => {
 		const init = async () => {
 			setLoading(true);
 
 			try {
-				const currentUser = localRepository.getCurrentUser();
+				const currentUser = await localRepository.getCurrentUser();
 				setUser(currentUser);
 				setIsLoggedIn(true);
 
@@ -143,10 +165,6 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 		<GlobalContext.Provider
 			value={{
 				user,
-				saveName,
-				saveTheme,
-				getName,
-				getTheme,
 				setError,
 				setErrorMessage,
 				setLoading,
@@ -156,6 +174,7 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 				getAllWorkPackages,
 				getFilteredWorkPackages,
 				getCurrentUser,
+				saveUser,
 				loading,
 				isLoggedIn,
 				error,
