@@ -13,7 +13,6 @@ import RNDateTimePicker, {
 	DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { DataObject } from "@/lib/repository/@types/DataObject";
 import FormField from "../components/FormField";
 import { ScrollView } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,19 +30,11 @@ const WorkPackageItem = () => {
 	const [start_date, setStartDate] = useState<Date>(new Date(Date.now()));
 	const [projects, setProjects] = useState<
 		{ label: string; value: string }[]
-	>([{ label: "Eingang", value: "0" }]);
+	>([]);
 	const [statuses, setStatuses] = useState<
 		{ label: string; value: string }[]
-	>([
-		{ label: "Offen", value: "0" },
-		{ label: "In Bearbeitung", value: "1" },
-		{ label: "Abgeschlossen", value: "2" },
-	]);
-	const [types, setTypes] = useState<{ label: string; value: string }[]>([
-		{ label: "Aufgabe", value: "0" },
-		{ label: "Phase", value: "1" },
-		{ label: "Meilenstein", value: "2" },
-	]);
+	>([]);
+	const [types, setTypes] = useState<{ label: string; value: string }[]>([]);
 
 	const [project, setProject] = useState<string>("");
 	const [status, setStatus] = useState<string>("");
@@ -89,39 +80,38 @@ const WorkPackageItem = () => {
 		}
 
 		setProjects((prev) =>
-			user.projects.map((project: any) => {
+			user.projects.map((project: string) => {
 				return {
-					label: project.value,
-					value: project.value,
+					label: project,
+					value: project,
 				};
 			})
 		);
+		setProject(user.projects[0]);
 
 		setStatuses((prev) =>
-			user.statuses.map((status: any) => {
+			user.statuses.map((status: string) => {
 				return {
-					label: status.value,
-					value: status.value,
+					label: status,
+					value: status,
 				};
 			})
 		);
+		setStatus(user.statuses[0]);
 
 		setTypes((prev) =>
-			user.types.map((type: any) => {
+			user.types.map((type: string) => {
 				return {
-					label: type.value,
-					value: type.value,
+					label: type,
+					value: type,
 				};
 			})
 		);
+		setType(user.types[0]);
 
 		const wpId = path.substring(path.lastIndexOf("/") + 1);
 
 		if (wpId !== "new" && wpId !== undefined && typeof wpId === "string") {
-			console.log(workPackages);
-
-			console.log(wpId);
-
 			const workPackage = workPackages.find(
 				(wp) => wp.id === parseInt(wpId)
 			);
@@ -133,9 +123,9 @@ const WorkPackageItem = () => {
 				setStartDate(startDate);
 				const dueDate = new Date(workPackage.due_date);
 				setDueDate(dueDate);
-				setProject(workPackage.project.value);
-				setStatus(workPackage.status.value);
-				setType(workPackage.type.value);
+				setProject(workPackage.project);
+				setStatus(workPackage.status);
+				setType(workPackage.type);
 			}
 		}
 	}, []);
@@ -153,6 +143,7 @@ const WorkPackageItem = () => {
 					value={description}
 					placeholder="Name der Aufgabe"
 					handleChangeText={setDescription}
+					autuFocus={true}
 				/>
 				<View className="mt-4">
 					<Text className="text-base text-primaryText/90 font-medium">

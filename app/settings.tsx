@@ -11,46 +11,32 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ScrollView } from "react-native-gesture-handler";
 
 const Settings = () => {
-	const { user, openProjectData, loading, saveUser } = useGlobalContext();
-	const [firstName, setFirstName] = useState<string>(user.firstName);
-	const [url, setUrl] = useState<string>(user.url);
-	const [apiKey, setApiKey] = useState<string>(user.apiKey);
-	const [theme, setTheme] = useState<string>(user.theme);
-	const [openTheme, setOpenTheme] = useState<boolean>(false);
+	const { user, loading, saveUser } = useGlobalContext();
+	const [firstName, setFirstName] = useState<string>("");
 	const [projects, setProjects] = useState<string>("");
 	const [statuses, setStatuses] = useState<string>("");
 	const [types, setTypes] = useState<string>("");
 
 	function handleSave() {
-		if (firstName === "" || url === "" || apiKey === "" || theme === "") {
-			Alert.alert("Bitte füllen Sie alle Felder aus.");
+		if (firstName === "") {
+			Alert.alert("Bitte gebe zumindest einen Benutzernamen an.");
 			return;
 		}
-		const projs: any = projects.split(",").map((p, i) => {
-			return { id: i, value: p };
-		});
-		const stats: any = statuses.split(",").map((p, i) => {
-			return { id: i, value: p };
-		});
-		const typs: any = types.split(",").map((p, i) => {
-			return { id: i, value: p };
-		});
+		const projs: any = projects.split(",");
+		const stats: any = statuses.split(",");
+		const typs: any = types.split(",");
 
-		saveUser(
-			firstName,
-			url,
-			apiKey,
-			theme,
-			projs,
-			stats,
-			typs,
-			projects[0],
-			statuses[0],
-			types[0]
-		);
+		saveUser(firstName, projs, stats, typs);
 
-		router.back();
+		router.push("/home");
 	}
+
+	useEffect(() => {
+		setFirstName(user.firstName);
+		setProjects(user.projects.join(","));
+		setStatuses(user.statuses.join(","));
+		setTypes(user.types.join(","));
+	}, [user]);
 
 	return (
 		<SafeAreaView className="bg-background p-4">
@@ -70,76 +56,29 @@ const Settings = () => {
 					}}
 					placeholder="Benutzername"
 				/>
-				<Text className="text-white text-sm mt-5">
-					URL der Openproject-Instanz
-				</Text>
-				<FormInput
-					initialText={url}
-					setTextInput={(text) => {
-						setUrl(text);
-					}}
-					placeholder="URL"
-				/>
-				<Text className="text-white text-sm mt-5">
-					API-Key der Openproject-Instanz
-				</Text>
-				<FormInput
-					initialText={apiKey}
-					setTextInput={(text) => {
-						setApiKey(text);
-					}}
-					placeholder="API-Key"
-				/>
-				<View className="mt-5 z-50">
-					<Text className="text-white text-sm">Theme auswählen</Text>
-
-					<DropDownPicker
-						value={theme}
-						items={[
-							{ label: "Hell", value: "Hell" },
-							{ label: "Dunkel", value: "Dunkel" },
-						]}
-						multiple={false}
-						theme="DARK"
-						placeholder={
-							theme === "" ? "Theme auswählen" : theme.toString()
-						}
-						setValue={(val) => {
-							setTheme(val);
-						}}
-						open={openTheme}
-						setOpen={() => setOpenTheme(!openTheme)}
-					/>
-				</View>
-				<Text className="text-white text-sm mt-5">
-					Projekte Kommagetrennt eintragen
-				</Text>
+				<Text className="text-white text-sm mt-5">Projekte</Text>
 				<FormInput
 					initialText={projects}
 					setTextInput={(text) => {
 						setProjects(text);
 					}}
-					placeholder="Projekte (Standard zuerst)"
+					placeholder="Projekte (Standard zuerst, kommagetrennt)"
 				/>
-				<Text className="text-white text-sm mt-5">
-					Aufgabenstatuse Kommagetrennt eintragen
-				</Text>
+				<Text className="text-white text-sm mt-5">Aufgabenstatuse</Text>
 				<FormInput
 					initialText={statuses}
 					setTextInput={(text) => {
 						setStatuses(text);
 					}}
-					placeholder="Aufgabenstatus (Standard zuerst)"
+					placeholder="Aufgabenstatus (Standard zuerst, kommagetrennt)"
 				/>
-				<Text className="text-white text-sm mt-5">
-					Projekte Kommagetrennt eintragen
-				</Text>
+				<Text className="text-white text-sm mt-5">Aufgabentypen</Text>
 				<FormInput
 					initialText={types}
 					setTextInput={(text) => {
 						setTypes(text);
 					}}
-					placeholder="Aufgabentypen (Standard zuerst)"
+					placeholder="Aufgabentypen (Standard zuerst, kommagetrennt)"
 				/>
 				<View className="py-10">
 					<FilledButton

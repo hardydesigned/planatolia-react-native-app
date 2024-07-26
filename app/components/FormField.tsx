@@ -6,7 +6,8 @@ const FormField: React.FC<{
 	value: string;
 	placeholder: string;
 	handleChangeText: Function;
-}> = ({ title, value, placeholder, handleChangeText }) => {
+	autuFocus?: boolean;
+}> = ({ title, value, placeholder, handleChangeText, autuFocus }) => {
 	return (
 		<View className={`space-y-2`}>
 			<Text className="text-base text-primaryText/90 font-medium">
@@ -20,6 +21,7 @@ const FormField: React.FC<{
 					placeholder={placeholder}
 					placeholderTextColor="#7B7B8B"
 					onChangeText={(e) => handleChangeText(e)}
+					autoFocus={autuFocus}
 				/>
 			</View>
 		</View>

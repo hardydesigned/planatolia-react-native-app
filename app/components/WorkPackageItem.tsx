@@ -33,15 +33,15 @@ const WorkPackageItem: React.FC<{
 	};
 
 	useEffect(() => {
-		if (workPackage?.status?.value === "Abgeschlossen") {
+		if (workPackage?.status === "Abgeschlossen") {
 			setStatusClass("bg-accent2");
 			setStatusClassText("line-through text-accent2");
 		}
-		if (workPackage?.status?.value === "In Bearbeitung") {
+		if (workPackage?.status === "In Bearbeitung") {
 			setStatusClass("bg-tertiary");
 			setStatusClassText("");
 		}
-		if (workPackage?.status?.value === "Offen") {
+		if (workPackage?.status === "Offen") {
 			setStatusClass("bg-secondaryBackground");
 			setStatusClassText("");
 		}
@@ -67,12 +67,12 @@ const WorkPackageItem: React.FC<{
 						<Text
 							className={`text-primaryText text-xs str ${statusClassText}`}
 						>
-							{workPackage?.project?.value}
+							{workPackage?.project}
 						</Text>
 						<Text
 							className={`text-primaryText text-xs ${statusClassText}`}
 						>
-							{workPackage?.type?.value}
+							{workPackage?.type}
 						</Text>
 					</View>
 					<Text
@@ -98,13 +98,3 @@ const WorkPackageItem: React.FC<{
 };
 
 export default WorkPackageItem;
-
-// id: number;
-// description: string;
-// due_date: string;
-// created_at: string;
-// updated_at: string;
-// start_date: string;
-// project: OpenProjectDataObject;
-// status: OpenProjectDataObject;
-// type: OpenProjectDataObject;

@@ -1,4 +1,3 @@
-import { DataObject } from "./@types/DataObject";
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 
@@ -18,14 +17,8 @@ export default interface IRepository {
 	getCurrentUser(): Promise<User>;
 	saveUser: (
 		firstname: string,
-		theme: string,
-		apiKey: string,
-		url: string,
-		projects: DataObject[],
-		statuses: DataObject[],
-		types: DataObject[],
-		projectDefault: DataObject,
-		typeDefault: DataObject,
-		statusDefault: DataObject
+		projects: string[],
+		statuses: string[],
+		types: string[]
 	) => any;
 }

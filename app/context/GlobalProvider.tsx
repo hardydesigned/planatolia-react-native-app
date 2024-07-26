@@ -3,8 +3,6 @@ import { GlobalContextType } from "./GlobalContextType";
 import { User } from "@/lib/repository/@types/User";
 import { WorkPackage } from "@/lib/repository/@types/WorkPackage";
 import LocalRepositoryImpl from "@/lib/repository/LocalRepositoryImpl";
-import OpenProjectRepositoryImpl from "@/lib/repository/OpenProjectRepositoryImpl";
-import { DataObject } from "@/lib/repository/@types/DataObject";
 
 export const GlobalContext = React.createContext<GlobalContextType>({} as any);
 export const useGlobalContext = () => React.useContext(GlobalContext);
@@ -14,16 +12,11 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
 	const [user, setUser] = React.useState<User | null>(null);
 	const [loading, setLoading] = React.useState<boolean>(false);
-	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = React.useState<string>("");
 	const [workPackages, setWorkPackages] = React.useState<WorkPackage[]>([]);
-	const [openProjectData, setOpenProjectData] =
-		React.useState<DataObject | null>(null);
-	const [useOpenproject, setUseOpenproject] = React.useState<boolean>(false);
 
 	const localRepository = new LocalRepositoryImpl();
-	const openprojectRepository = new OpenProjectRepositoryImpl();
 
 	const saveWorkPackage = async (
 		id: number,
@@ -106,28 +99,16 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const saveUser = async (
 		firstname: string,
-		theme: string,
-		apiKey: string,
-		url: string,
-		projects: DataObject[],
-		statuses: DataObject[],
-		types: DataObject[],
-		projectDefault: DataObject,
-		typeDefault: DataObject,
-		statusDefault: DataObject
+		projects: string[],
+		statuses: string[],
+		types: string[]
 	) => {
 		try {
 			await localRepository.saveUser(
 				firstname,
-				theme,
-				apiKey,
-				url,
 				projects,
 				statuses,
-				types,
-				projectDefault,
-				typeDefault,
-				statusDefault
+				types
 			);
 			await getCurrentUser();
 		} catch (error) {
@@ -144,14 +125,8 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 			try {
 				const currentUser = await localRepository.getCurrentUser();
 				setUser(currentUser);
-				setIsLoggedIn(true);
-
-				if (currentUser.apiKey !== "" && currentUser.url !== "") {
-					setUseOpenproject(true);
-				}
 			} catch (error) {
 				setError(true);
-				setIsLoggedIn(false);
 				setErrorMessage("Fehler beim Abrufen der Nutzerdaten.");
 			} finally {
 				setLoading(false);
@@ -176,11 +151,9 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 				getCurrentUser,
 				saveUser,
 				loading,
-				isLoggedIn,
 				error,
 				errorMessage,
 				workPackages,
-				openProjectData,
 			}}
 		>
 			{children}

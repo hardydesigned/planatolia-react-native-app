@@ -5,7 +5,7 @@ export interface WorkPackage {
 	description: string;
 	due_date: string;
 	start_date: string;
-	project: DataObject;
-	status: DataObject;
-	type: DataObject;
+	project: string;
+	status: string;
+	type: string;
 }

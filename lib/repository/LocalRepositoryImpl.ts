@@ -1,4 +1,3 @@
-import { DataObject } from "./@types/DataObject";
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 import IRepository from "./IRepository";
@@ -26,13 +25,9 @@ export default class LocalRepositoryImpl implements IRepository {
 			if (id === 0) {
 				const user = await this.getCurrentUser();
 
-				const proj = user.projects!.find(
-					(item) => item.value === project
-				)!;
-				const stat = user.statuses!.find(
-					(item) => item.value === status
-				)!;
-				const typ = user.types!.find((item) => item.value === type)!;
+				const proj = user.projects!.find((item) => item === project)!;
+				const stat = user.statuses!.find((item) => item === status)!;
+				const typ = user.types!.find((item) => item === type)!;
 
 				const wps = await this.getAllWorkPackages();
 
@@ -67,13 +62,13 @@ export default class LocalRepositoryImpl implements IRepository {
 					workPackage.due_date = due_date;
 					workPackage.start_date = start_date;
 					workPackage.project = user.projects!.find(
-						(item) => item.value === project
+						(item) => item === project
 					)!;
 					workPackage.status = user.statuses!.find(
-						(item) => item.value === status
+						(item) => item === status
 					)!;
 					workPackage.type = user.types!.find(
-						(item) => item.value === type
+						(item) => item === type
 					)!;
 
 					await AsyncStorage.mergeItem(
@@ -101,14 +96,20 @@ export default class LocalRepositoryImpl implements IRepository {
 
 			const values = await AsyncStorage.multiGet(keys);
 
-			const wps = values.map((item) => {
-				return JSON.parse(item[1]?.toString() || "");
+			let wps: any = [];
+
+			values.map((item) => {
+				if (item[0].includes("workPackage-")) {
+					wps.push(JSON.parse(item[1]?.toString() || ""));
+				}
 			});
 
 			//await AsyncStorage.clear();
 
 			return wps;
 		} catch (e) {
+			console.log(e);
+
 			throw new Error("Failed to get work packages locally.");
 		}
 	}
@@ -119,73 +120,49 @@ export default class LocalRepositoryImpl implements IRepository {
 		const wps = await this.getAllWorkPackages();
 		return wps.filter(
 			(item) =>
-				item.project.value === filter ||
-				item.status.value === filter ||
-				item.type.value === filter
+				item.project === filter ||
+				item.status === filter ||
+				item.type === filter
 		);
 	}
 
 	async getCurrentUser(): Promise<User> {
-		const values = await AsyncStorage.multiGet([
-			"firstName",
-			"theme",
-			"url",
-			"apiKey",
-			"projects",
-			"statuses",
-			"types",
-		]);
+		try {
+			const values = await AsyncStorage.multiGet([
+				"firstName",
+				"projects",
+				"statuses",
+				"types",
+			]);
 
-		const projs = JSON.parse(values[4][1]?.toString() || "");
-		const stats = JSON.parse(values[5][1]?.toString() || "");
-		const typs = JSON.parse(values[6][1]?.toString() || "");
+			const projs = JSON.parse(values[1][1]?.toString() || "");
+			const stats = JSON.parse(values[2][1]?.toString() || "");
+			const typs = JSON.parse(values[3][1]?.toString() || "");
 
-		return {
-			firstName: values[0][1]?.toString() || "",
-			theme: values[1][1]?.toString() || "",
-			url: values[2][1]?.toString() || "",
-			apiKey: values[3][1]?.toString() || "",
-			projects: projs,
-			statuses: stats,
-			types: typs,
-			projectDefault: projs[0],
-			typeDefault: typs[0],
-			statusDefault: stats[0],
-		};
+			return {
+				firstName: values[0][1]?.toString() || "",
+				projects: projs,
+				statuses: stats,
+				types: typs,
+			};
+		} catch (error) {
+			throw new Error("Failed to getCurrentUser locally on Repo");
+		}
 	}
 
 	async saveUser(
 		firstname: string,
-		theme: string,
-		apiKey: string,
-		url: string,
-		projects: DataObject[],
-		statuses: DataObject[],
-		types: DataObject[],
-		projectDefault: DataObject,
-		typeDefault: DataObject,
-		statusDefault: DataObject
+		projects: string[],
+		statuses: string[],
+		types: string[]
 	) {
 		try {
+			console.log(firstname);
+
 			await AsyncStorage.setItem("firstName", firstname);
-			await AsyncStorage.setItem("theme", theme);
-			await AsyncStorage.setItem("apiKey", apiKey);
-			await AsyncStorage.setItem("url", url);
 			await AsyncStorage.setItem("projects", JSON.stringify(projects));
 			await AsyncStorage.setItem("statuses", JSON.stringify(statuses));
 			await AsyncStorage.setItem("types", JSON.stringify(types));
-			await AsyncStorage.setItem(
-				"projectDefault",
-				JSON.stringify(projectDefault)
-			);
-			await AsyncStorage.setItem(
-				"typeDefault",
-				JSON.stringify(typeDefault)
-			);
-			await AsyncStorage.setItem(
-				"statusDefault",
-				JSON.stringify(statusDefault)
-			);
 		} catch (error) {
 			throw new Error("Failed to save work package locally on Repo");
 		}

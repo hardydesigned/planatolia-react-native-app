@@ -1,11 +1,9 @@
 export type GlobalContextType = {
 	user: User;
 	loading: boolean;
-	isLoggedIn: boolean;
 	error: boolean;
 	errorMessage: string;
 	workPackages: WorkPackage[];
-	openProjectData: OpenProjectDataObject;
 	setError: (error: boolean) => void;
 	setErrorMessage: (errorMessage: string) => void;
 	setLoading: (loading: boolean) => void;
@@ -15,9 +13,9 @@ export type GlobalContextType = {
 		description: string,
 		due_date: string,
 		start_date: string,
-		project: OpenProjectDataObject,
-		status: OpenProjectDataObject,
-		type: OpenProjectDataObject
+		project: string,
+		status: string,
+		type: string
 	) => WorkPackage;
 	deleteWorkPackage: (id: number) => WorkPackage;
 	getAllWorkPackages: () => Promise<WorkPackage[]>;
@@ -25,14 +23,8 @@ export type GlobalContextType = {
 	getCurrentUser: () => Promise<User>;
 	saveUser: (
 		firstname: string,
-		theme: string,
-		apiKey: string,
-		url: string,
-		projects: DataObject[],
-		statuses: DataObject[],
-		types: DataObject[],
-		projectDefault: DataObject,
-		typeDefault: DataObject,
-		statusDefault: DataObject
+		projects: string[],
+		statuses: string[],
+		types: string[]
 	) => any;
 };
