@@ -55,14 +55,6 @@ const WorkPackageItem = () => {
 		} else {
 			router.back();
 		}
-		console.log(id);
-		console.log(description);
-		console.log(due_date);
-		console.log(start_date);
-		console.log(project);
-		console.log(status);
-		console.log(type);
-
 		await saveWorkPackage(
 			id,
 			description,
@@ -131,7 +123,10 @@ const WorkPackageItem = () => {
 	}, []);
 
 	return (
-		<SafeAreaView className="bg-background h-full p-4 flex flex-col justify-between">
+		<SafeAreaView
+			className="bg-background h-full p-4 flex flex-col justify-between"
+			testID="workPackageItem"
+		>
 			<View className="p-4">
 				<View className="flex flex-row w-full justify-end items-center">
 					<TouchableOpacity onPress={() => router.back()}>

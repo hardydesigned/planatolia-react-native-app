@@ -17,9 +17,6 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 
 	const handlePress = async (value: string) => {
 		await filterFunction(value);
-		console.log(value);
-		console.log(activeFilter);
-
 		setActiveFilter(value);
 	};
 
@@ -29,21 +26,21 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 				<FlatList
 					className="h-full"
 					data={dataObjects}
-					keyExtractor={(item) => item.id.toString()}
+					keyExtractor={(item) => item.toString()}
 					renderItem={({ item }) => (
 						<TouchableOpacity
 							className="mb-3 border-primaryText/30 border-b-2 pb-1"
-							onPress={() => handlePress(item.value)}
+							onPress={() => handlePress(item)}
 						>
 							<Text
 								className={`${
-									activeFilter === item.value
+									activeFilter === item
 										? "text-primary"
 										: "text-primaryText"
 								} text-lg`}
-								key={item.id}
+								key={item}
 							>
-								{item.value}
+								{item}
 							</Text>
 						</TouchableOpacity>
 					)}
@@ -52,7 +49,10 @@ const FilterBottomSheet: React.FC<{ user: User; filterFunction: Function }> = ({
 							<Text className=" text-primaryText text-xl mb-4">
 								Filtern nach {filterText}
 							</Text>
-							<TouchableOpacity onPress={() => handlePress("")}>
+							<TouchableOpacity
+								onPress={() => handlePress("")}
+								testID="refreshButton"
+							>
 								<Ionicons
 									name="refresh-circle"
 									size={32}

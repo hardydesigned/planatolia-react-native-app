@@ -30,6 +30,7 @@ const FilledButton: React.FC<{
 					color="#fff"
 					size="small"
 					className="ml-2"
+					testID="activityIndicator"
 				/>
 			)}
 		</TouchableOpacity>

@@ -14,6 +14,7 @@ const EmptyState: React.FC<{
 				name="information-circle-outline"
 				size={48}
 				color="white"
+				testID="icon"
 			/>
 			<Text className="text-xl font-medium mt-5 text-gray-100">
 				{title}

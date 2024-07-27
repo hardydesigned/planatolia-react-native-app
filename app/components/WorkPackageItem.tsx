@@ -1,19 +1,8 @@
 import { WorkPackage } from "@/lib/repository/@types/WorkPackage";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-	ActivityIndicator,
-	Animated,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import FilterBottomSheet from "./FilterBottomSheet";
-import FilledButton from "./FilledButton";
-import OutlinedButton from "./OutlinedButton";
+import { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { Swipeable } from "react-native-gesture-handler";
 
 const WorkPackageItem: React.FC<{
 	workPackage: WorkPackage;
