@@ -3,8 +3,8 @@ import { render, waitFor } from "@testing-library/react-native";
 import { useFonts } from "expo-font";
 import { Alert } from "react-native";
 import RootLayout from "./_layout";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SplashScreen } from "expo-router";
+import GestureHandlerRootView from "react-native-gesture-handler/lib/typescript/components/GestureHandlerRootView";
+import { SplashScreen } from "expo-router/build/views/Splash";
 
 jest.mock("expo-font", () => ({
 	useFonts: jest.fn(),

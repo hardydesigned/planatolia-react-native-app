@@ -18,7 +18,7 @@ const FloatingActionButton: React.FC<{
 			testID="floatingActionButton"
 			className={`bg-primary rounded-full flex justify-center items-center w-16 h-16 absolute bottom-10 right-5 z-50`}
 		>
-			<Entypo name="plus" size={32} color="white" />
+			<Entypo name="plus" size={32} color="white" testID="ionicons" />
 		</TouchableOpacity>
 	);
 };

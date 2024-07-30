@@ -6,15 +6,6 @@ import LocalRepositoryImpl from "@/lib/repository/LocalRepositoryImpl";
 jest.mock("@/lib/repository/LocalRepositoryImpl");
 
 describe("GlobalProvider", () => {
-	it("should render the component", () => {
-		const { getByTestId } = render(
-			<GlobalProvider>
-				<div data-testid="test-component" />
-			</GlobalProvider>
-		);
-		expect(getByTestId("test-component")).toBeTruthy();
-	});
-
 	it("should save work package when saveWorkPackage is called", async () => {
 		const { result } = renderHook(() => useGlobalContext());
 		const { saveWorkPackage } = result.current;

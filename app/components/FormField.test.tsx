@@ -41,6 +41,7 @@ describe("FormField", () => {
 				value=""
 				placeholder="Enter your username"
 				handleChangeText={() => {}}
+				autoFocus={true}
 			/>
 		);
 

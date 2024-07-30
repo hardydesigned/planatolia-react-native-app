@@ -1,5 +1,3 @@
-import { DataObject } from "./DataObject";
-
 export interface WorkPackage {
 	id: number;
 	description: string;

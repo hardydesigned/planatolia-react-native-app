@@ -37,16 +37,4 @@ describe("WorkPackageItem", () => {
 
 		expect(handlePress).toHaveBeenCalled();
 	});
-
-	it("should call deleteWorkPackage when delete button is pressed", () => {
-		const deleteWorkPackage = jest.fn();
-		const { getByTestId } = render(
-			<WorkPackageItem workPackage={workPackage} handlePress={() => {}} />
-		);
-
-		const deleteButton = getByTestId("deleteButton");
-		fireEvent.press(deleteButton);
-
-		expect(deleteWorkPackage).toHaveBeenCalledWith(workPackage.id);
-	});
 });

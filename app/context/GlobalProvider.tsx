@@ -1,3 +1,5 @@
+// Not tested
+
 import * as React from "react";
 import { GlobalContextType } from "./GlobalContextType";
 import { User } from "@/lib/repository/@types/User";

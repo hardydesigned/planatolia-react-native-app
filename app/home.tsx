@@ -1,3 +1,5 @@
+// Not tested
+
 import {
 	View,
 	Text,
@@ -61,7 +63,7 @@ const Home = () => {
 
 	return (
 		<SafeAreaView className="bg-background h-full p-4">
-			<Loader isLoading={loading} />
+			<Loader isLoading={loading} testID="loader" />
 
 			<View className="flex flex-row justify-end gap-4">
 				<TouchableOpacity onPress={handlePresentModalPress}>
@@ -94,6 +96,7 @@ const Home = () => {
 
 			<FlatList
 				data={workPackages}
+				testID="flatList"
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={({ item }) => (
 					<WorkPackageItem

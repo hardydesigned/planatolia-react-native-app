@@ -1,3 +1,5 @@
+// Not tested
+
 import { View, Text, StatusBar, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
@@ -40,7 +42,7 @@ const Settings = () => {
 
 	return (
 		<SafeAreaView className="bg-background p-4">
-			<Loader isLoading={loading} />
+			<Loader isLoading={loading} testID="loader" />
 
 			<View className="flex flex-row w-full justify-end items-center pb-10">
 				<TouchableOpacity onPress={() => router.back()}>

@@ -1,3 +1,5 @@
+// Not tested
+
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import "react-native-url-polyfill/auto";
@@ -43,7 +45,7 @@ const RootLayout = () => {
 	}
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
+		<GestureHandlerRootView style={{ flex: 1 }} testID="rootLayout">
 			<BottomSheetModalProvider>
 				<GlobalProvider>
 					<Stack>

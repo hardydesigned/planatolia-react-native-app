@@ -5,8 +5,8 @@ import React, { useEffect } from "react";
 import OutlinedButton from "./components/OutlinedButton";
 import { Redirect, router } from "expo-router";
 import { useGlobalContext } from "./context/GlobalProvider";
-import Loader from "./components/Loader";
 import { projects, statuses, types } from "@/lib/domain/constants/standards";
+import Loader from "./components/Loader";
 
 const StartPage = () => {
 	const { loading, saveUser, getCurrentUser } = useGlobalContext();
@@ -23,7 +23,7 @@ const StartPage = () => {
 
 	return (
 		<SafeAreaView className="bg-background h-full p-4">
-			<Loader isLoading={loading} />
+			<Loader isLoading={loading} testID={"loader"} />
 
 			<ScrollView>
 				<Text className="text-white text-center text-4xl font-dbold mt-20">

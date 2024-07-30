@@ -39,6 +39,7 @@ const WorkPackageItem: React.FC<{
 	return (
 		<>
 			<TouchableOpacity
+				testID="workPackageItem"
 				onPress={() => {
 					handlePress();
 					setAnimateClass("");
@@ -71,7 +72,10 @@ const WorkPackageItem: React.FC<{
 					</Text>
 				</View>
 				{animateClass !== "" && (
-					<TouchableOpacity onPress={handleDeletePress}>
+					<TouchableOpacity
+						onPress={handleDeletePress}
+						testID="deleteButton"
+					>
 						<View className="w-16 -translate-x-8 pb-[6px] min-h-[62px] bg-red-700 rounded-xl flex items-center justify-center">
 							<Ionicons
 								name="trash-outline"

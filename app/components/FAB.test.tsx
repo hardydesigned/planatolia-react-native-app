@@ -14,4 +14,15 @@ describe("FloatingActionButton", () => {
 
 		expect(handlePress).toHaveBeenCalled();
 	});
+
+	it("should render the Ionicons component", () => {
+		const handlePress = jest.fn();
+
+		const { getByTestId } = render(
+			<FloatingActionButton handlePress={handlePress} />
+		);
+		const ionicons = getByTestId("ionicons");
+
+		expect(ionicons).toBeDefined();
+	});
 });

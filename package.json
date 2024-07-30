@@ -12,7 +12,10 @@
     "lint": "expo lint"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFiles": [
+      "./__mocks__/jestsetup.js"
+    ]
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.1",
@@ -22,6 +25,7 @@
     "@react-native-community/datetimepicker": "^8.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "eas": "^0.1.0",
     "expo": "~51.0.18",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.7",

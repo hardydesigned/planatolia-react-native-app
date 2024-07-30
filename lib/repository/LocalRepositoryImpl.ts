@@ -1,3 +1,5 @@
+// Not tested
+
 import { User } from "./@types/User";
 import { WorkPackage } from "./@types/WorkPackage";
 import IRepository from "./IRepository";
@@ -93,6 +95,10 @@ export default class LocalRepositoryImpl implements IRepository {
 	async getAllWorkPackages(): Promise<WorkPackage[]> {
 		try {
 			const keys = await AsyncStorage.getAllKeys();
+
+			if (!keys || keys.length === 0) {
+				return [];
+			}
 
 			const values = await AsyncStorage.multiGet(keys);
 

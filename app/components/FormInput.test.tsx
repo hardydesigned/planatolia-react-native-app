@@ -24,7 +24,7 @@ describe("FormInput", () => {
 		const setTextInput = jest.fn();
 
 		const { getByPlaceholderText } = render(
-			<FormInput setTextInput={setTextInput} />
+			<FormInput setTextInput={setTextInput} placeholder="Enter text" />
 		);
 
 		const input = getByPlaceholderText("Enter text");

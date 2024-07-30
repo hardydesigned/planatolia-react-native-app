@@ -1,6 +1,9 @@
 import { View, ActivityIndicator, Dimensions, Platform } from "react-native";
 
-const Loader: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+const Loader: React.FC<{ isLoading: boolean; testID: string }> = ({
+	isLoading,
+	testID,
+}) => {
 	const osName = Platform.OS;
 	const screenHeight = Dimensions.get("screen").height;
 
@@ -12,11 +15,13 @@ const Loader: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 			style={{
 				height: screenHeight,
 			}}
+			testID={testID}
 		>
 			<ActivityIndicator
 				animating={isLoading}
 				color="#fff"
 				size={osName === "ios" ? "large" : 50}
+				testID="activityIndicator"
 			/>
 		</View>
 	);
